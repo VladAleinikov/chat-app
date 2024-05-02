@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from '../schemas/user.schema';
 import { Response } from 'express';
 import { Model, Types } from 'mongoose';
 import { SignupDto } from './dto/signup.dto';
