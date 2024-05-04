@@ -1,17 +1,23 @@
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Conversation } from "./conversation";
 
 export const Conversations = () => {
-  return <div className="py-2 flex flex-col gap-y-1 overflow-auto"></div>;
-}
+  const conversations: any[] = [];
 
-Conversations.Skeleton = function ConversationsSkeleton() {
-  return (
-    <div className="py-2 flex flex-col gap-y-1 overflow-auto">
-      <Conversation.Skeleton />
-      <Conversation.Skeleton />
-      <Conversation.Skeleton />
-      <Conversation.Skeleton />
-    </div>
-  );
-} 
+  if (!conversations) {
+    return (
+      <div className="py-2 flex flex-col gap-y-1 overflow-auto">
+        <Conversation.Skeleton />
+        <Conversation.Skeleton />
+        <Conversation.Skeleton />
+        <Conversation.Skeleton />
+      </div>
+    )
+  }
+  return <div className="py-2 flex flex-col gap-y-1 overflow-auto">
+    <Conversation/>
+    <Conversation/>
+    <Conversation/>
+    <Conversation/>
+  </div>;
+}

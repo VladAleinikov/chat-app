@@ -3,11 +3,8 @@
 import { FormInput } from "@/components/form/form-input"
 import { ElementRef, useRef } from "react"
 
-interface SearchInputProps{
-      disabled: boolean
-}
 
-export const SearchInput = ({ disabled}: SearchInputProps) => {
+export const SearchInput = () => {
       const formRef = useRef<ElementRef<"form">>(null)
       const inputRef = useRef<ElementRef<"input">>(null)
 
@@ -23,7 +20,6 @@ export const SearchInput = ({ disabled}: SearchInputProps) => {
                     placeholder="Поиск..."
                     onBlur={onBlur}
                     className=""
-                    disabled={disabled}
               />
     </form>
   );

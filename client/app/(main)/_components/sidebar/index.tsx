@@ -5,16 +5,13 @@ import { LogOut } from "lucide-react"
 
 
 export const Sidebar = () => {
-  const conversations: any[] = null;
   return (
-    <div>
-      <SearchInput disabled={!conversations} />
+    <div className="flex flex-col gap-y-2 border-r border-slate-500 p-4">
+      <SearchInput />
       <Separator />
-      {!conversations
-        ? <Conversations.Skeleton />
-        : <Conversations />
-      }
-      <LogOut/>
+      <Conversations />
+
+      <LogOut className="mt-auto w-6 h-6 text-white cursor-pointer hover:text-blue-500 transition"/>
     </div>
   )
 }
