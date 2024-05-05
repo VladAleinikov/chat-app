@@ -2,17 +2,26 @@
 
 import { FormInput } from "@/components/form/form-input";
 import { FormSubmit } from "@/components/form/form-submit";
+import { useLazyLoginQuery } from "@/lib/auth/auth.api";
 import Link from "next/link";
 
 const LoginPage = () => {
+  const [login, { }] = useLazyLoginQuery();
+
+  const onSubmit = (formData: FormData) => {
+    const userName = formData.get("userName") as string;
+    const password = formData.get("password") as string;
+
+    login({userName, password})
+  }
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 backdrop-filter backdrop-blur-lg bg-opacity-0">
         <h1 className="text-3xl font-semibold text-center text-gray-300">
           Вход <span className="text-blue-500">ChatApp</span>
-          <form className="flex flex-col gap-y-2">
+          <form action={onSubmit} className="flex flex-col gap-y-2">
             <FormInput
-              id="username"
+              id="userName"
               label="Имя пользователя"
               placeholder="Введите имя пользователя"
               required={true}

@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const GenderSelect = () => {
   return (
-    <RadioGroup>
+    <RadioGroup name="gender" required>
       <div className="flex gap-x-3 items-center mt-2">
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="male" id="male" />
