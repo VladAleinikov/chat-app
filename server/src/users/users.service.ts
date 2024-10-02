@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Prisma, User } from '@prisma/client';
 import { Model } from 'mongoose';
-import { User, UserDocument } from 'src/schemas/user.schema';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(private prisma: PrismaService) {}
 
   async getUsers(request: Request, searchQuery = ''): Promise<User[]> {
     const loggedUserId = request['userId'];
-    const searchUsers = await this.userModel
-      .find({
-        _id: { $ne: loggedUserId },
-        fullName: { $regex: new RegExp(searchQuery, 'i') },
-      })
-      .select('-password');
+    const searchUsers = await this.prisma.user.findMany({
+      where: {
+        id: {
+          not: loggedUserId,
+        },
+        fullName: {
+          contains: searchQuery
+        }
+      },
+    });
 
     return searchUsers;
   }

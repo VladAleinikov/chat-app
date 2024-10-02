@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs
 import { Response } from 'express';
 import { MessagesService } from './messages.service';
 import { ObjectId } from 'mongoose';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('/messages')
 export class MessagesController {
@@ -11,7 +11,7 @@ export class MessagesController {
   @UseGuards(AuthGuard)
   @Post('/send/:id')
   sendMessage(
-    @Param('id') id: ObjectId,
+    @Param('id') id: string,
     @Body() body: {message: string},
     @Req() request: Request,
   ) {
@@ -21,7 +21,7 @@ export class MessagesController {
   @UseGuards(AuthGuard)
   @Get('/:id')
   getMessages(
-    @Param('id') id: ObjectId,
+    @Param('id') id: string,
     @Req() request: Request
   ) {
     return this.messagesService.getMessages(id, request)

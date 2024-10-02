@@ -1,21 +1,20 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../schemas/user.schema';
 import { Response } from 'express';
-import { Model, Types } from 'mongoose';
 import { SignupDto } from './dto/signup.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
-  private async generateTokenAndCookie(id: Types.ObjectId, response: Response) {
+  private async generateTokenAndCookie(id: string, response: Response) {
     const tokenPayload = {
       userId: id,
     };
@@ -37,7 +36,11 @@ export class AuthService {
       throw new HttpException("Passwords don't match", 400);
     }
 
-    const user = await this.userModel.findOne({ userName: dto.userName });
+    const user = await this.prisma.user.findUnique({
+      where: {
+        userName: dto.userName,
+      },
+    });
 
     if (user) {
       throw new HttpException('Username already exists', 400);
@@ -49,18 +52,22 @@ export class AuthService {
     const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${dto.userName}`;
     const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${dto.userName}`;
 
-    const newUser = await this.userModel.create({
-      ...dto,
-      profilePicture: dto.gender === 'male' ? boyProfilePic : girlProfilePic,
-      password: hashedPass,
+    const newUser = await this.prisma.user.create({
+      data: {
+        ...dto,
+        profilePicture: dto.gender === 'MALE' ? boyProfilePic : girlProfilePic,
+        password: hashedPass,
+      },
     });
 
-    await this.generateTokenAndCookie(newUser._id, response);
+    await this.generateTokenAndCookie(newUser.id, response);
 
     return newUser;
   }
   async login(dto: LoginDto, response: Response): Promise<User> {
-    const user = await this.userModel.findOne({ userName: dto.userName });
+    const user = await this.prisma.user.findUnique({
+      where: { userName: dto.userName },
+    });
     const isPasswordCorrect = await bcrypt.compare(
       dto.password,
       user?.password || '',
@@ -70,11 +77,11 @@ export class AuthService {
       throw new HttpException('Invalid credantials', 400);
     }
 
-    await this.generateTokenAndCookie(user._id, response);
+    await this.generateTokenAndCookie(user.id, response);
 
     return user;
   }
   async logout(response: Response) {
-    response.cookie("jwt", "", { maxAge: 0 });
+    response.cookie('jwt', '', { maxAge: 0 });
   }
 }

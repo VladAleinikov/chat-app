@@ -1,55 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
-import { Message, MessageDocument } from '../schemas/message.schema';
-import {
-  Conversation,
-  ConversationDocument,
-} from 'src/schemas/conversation.schema';
+import { Message } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(
-    @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
-    @InjectModel(Conversation.name)
-    private conversationModel: Model<ConversationDocument>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async sendMessage(
-    receiverId: ObjectId,
+    receiverId: string,
     message: string,
     request: Request,
   ): Promise<Message> {
     const senderId = request['userId'];
 
-    let conversation = await this.conversationModel.findOne({
-      participants: { $all: [senderId, receiverId] },
+    let conversation = await this.prisma.conversation.findFirst({
+      where: {
+        AND: [
+          { participants: { some: { id: senderId } } },
+          { participants: { some: { id: receiverId } } },
+        ],
+      },
     });
 
     if (!conversation) {
-      conversation = await this.conversationModel.create({
-        participants: [senderId, receiverId],
+      conversation = await this.prisma.conversation.create({
+        data: {
+          participants: { connect: [{ id: receiverId }, { id: senderId }] },
+        },
       });
     }
 
-    const newMessage = await this.messageModel.create({
-      receiverId,
-      senderId,
-      message,
+    const newMessage = await this.prisma.message.create({
+      data: {
+        receiverId,
+        senderId,
+        message,
+      },
     });
-
-    conversation.messages.push(newMessage.id);
-    await conversation.save();
 
     return newMessage;
   }
 
-  async getMessages(receiverId: ObjectId, request: Request): Promise<Message[]> {
+  async getMessages(receiverId: string, request: Request): Promise<Message[]> {
     const senderId = request['userId'];
-    const conversation = await this.conversationModel.findOne({
-      participants: { $all: [senderId, receiverId] }
-    }).populate("messages");
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        AND: [
+          { participants: { some: { id: senderId } } },
+          { participants: { some: { id: receiverId } } },
+        ],
+      },
+      include: {
+        messages: true,
+      },
+    });
 
     if (!conversation) {
       return [];

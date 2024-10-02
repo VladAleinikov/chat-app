@@ -9,7 +9,10 @@ async function bootstrap() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.CLIENT_DOMAIN,
+    credentials: true
+  });
   app.use(cookieParser());
 
   await app.listen(PORT);
