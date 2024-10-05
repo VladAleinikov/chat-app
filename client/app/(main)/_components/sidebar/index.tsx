@@ -1,3 +1,5 @@
+"use client"
+
 import { Separator } from "@/components/ui/separator"
 import { SearchInput } from "./search-input"
 import { Conversations } from "./conversations"
