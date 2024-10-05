@@ -81,6 +81,12 @@ export class AuthService {
 
     return user;
   }
+
+  async authUser(request: Request): Promise<User> {
+    const userId = request['userId'];
+    return await this.prisma.user.findUnique({ where: { id: userId } });
+  }
+
   async logout(response: Response) {
     response.cookie('jwt', '', { maxAge: 0 });
   }

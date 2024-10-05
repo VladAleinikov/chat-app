@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { Response } from 'express';
@@ -24,5 +24,10 @@ export class AuthController {
   @Post('/logout')
   logout(@Res({ passthrough: true }) response: Response) {
     return this.authService.logout(response);
+  }
+
+  @Get('/')
+  authUser(@Req() request: Request) {
+    return this.authService.authUser(request);
   }
 }
