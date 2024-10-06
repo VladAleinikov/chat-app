@@ -22,6 +22,7 @@ export default function RootLayout({
     // Create the store instance the first time this renders
     storeRef.current = makeStore();
   }
+  
   return (
     <html lang="en" className="dark">
       <body

@@ -4,11 +4,11 @@ import { Separator } from "@/components/ui/separator"
 import { SearchInput } from "./search-input"
 import { Conversations } from "./conversations"
 import { LogOut } from "lucide-react"
-import { useLazyLogoutQuery } from "@/lib/auth/auth.api"
+import { useLogoutMutation } from "@/lib/auth/auth.api"
 
 
 export const Sidebar = () => {
-  const [logout, { }] = useLazyLogoutQuery();
+  const [logout, { }] = useLogoutMutation();
 
   return (
     <div className="flex flex-col gap-y-2 border-r border-slate-500 p-4">

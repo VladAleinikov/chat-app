@@ -2,17 +2,20 @@
 
 import { FormInput } from "@/components/form/form-input";
 import { FormSubmit } from "@/components/form/form-submit";
-import { useLazyLoginQuery } from "@/lib/auth/auth.api";
+import { useLoginMutation } from "@/lib/auth/auth.api";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
-  const [login, { }] = useLazyLoginQuery();
+  const [login, { }] = useLoginMutation();
+  const router = useRouter();
 
   const onSubmit = (formData: FormData) => {
     const userName = formData.get("userName") as string;
     const password = formData.get("password") as string;
 
-    login({userName, password})
+    login({ userName, password })
+      .then(() => router.push("/"));
   }
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">

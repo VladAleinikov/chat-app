@@ -54,7 +54,9 @@ export class AuthService {
 
     const newUser = await this.prisma.user.create({
       data: {
-        ...dto,
+        userName: dto.userName,
+        fullName: dto.fullName,
+        gender: dto.gender,
         profilePicture: dto.gender === 'MALE' ? boyProfilePic : girlProfilePic,
         password: hashedPass,
       },
@@ -64,6 +66,7 @@ export class AuthService {
 
     return newUser;
   }
+
   async login(dto: LoginDto, response: Response): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { userName: dto.userName },
@@ -84,7 +87,7 @@ export class AuthService {
 
   async authUser(request: Request): Promise<User> {
     const userId = request['userId'];
-    return await this.prisma.user.findUnique({ where: { id: userId } });
+    return await this.prisma.user.findFirst({ where: { id: userId } });
   }
 
   async logout(response: Response) {

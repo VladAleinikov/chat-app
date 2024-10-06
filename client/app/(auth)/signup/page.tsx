@@ -1,13 +1,16 @@
-"use client"
+"use client";
 
 import { FormInput } from "@/components/form/form-input";
 import { FormSubmit } from "@/components/form/form-submit";
 import Link from "next/link";
 import { GenderSelect } from "./_components/gender-select";
 import { useLazySignupQuery } from "@/lib/auth/auth.api";
+import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
-  const [signup, { }] = useLazySignupQuery();
+  const [signup, {}] = useLazySignupQuery();
+  const router = useRouter();
+
   const onSubmit = (formData: FormData) => {
     const fullName = formData.get("fullName") as string;
     const userName = formData.get("userName") as string;
@@ -20,9 +23,9 @@ const SignupPage = () => {
       userName,
       password,
       confirmPassword,
-      gender
-    })
-  }
+      gender,
+    }).then(() => router.push("/login"));
+  };
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 backdrop-filter backdrop-blur-lg bg-opacity-0">
@@ -62,12 +65,12 @@ const SignupPage = () => {
             >
               Уже есть аккаунт?
             </Link>
-            <FormSubmit>Войти</FormSubmit>
+            <FormSubmit>Зарегистрироваться</FormSubmit>
           </form>
         </h1>
       </div>
     </div>
   );
-}
+};
 
-export default SignupPage
+export default SignupPage;
