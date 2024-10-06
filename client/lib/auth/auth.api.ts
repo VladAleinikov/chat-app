@@ -1,4 +1,5 @@
 import { ISignup } from "@/types/auth";
+import { User } from "@/types/user";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
@@ -13,7 +14,7 @@ export const authApi = createApi({
         body: user,
       }),
     }),
-    login: builder.mutation<void, Pick<ISignup, "userName" | "password">>({
+    login: builder.mutation<User, Pick<ISignup, "userName" | "password">>({
       query: (user) => ({
         url: "/login",
         method: "post",
@@ -28,7 +29,7 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
-    authUser: builder.query<void, void>({
+    authUser: builder.query<User, void>({
       query: () => ({
         url: "/",
         method: "GET",

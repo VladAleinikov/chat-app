@@ -1,14 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { authApi } from './auth/auth.api'
+import { configureStore } from "@reduxjs/toolkit";
+import { authApi } from "./auth/auth.api";
+import { conversationApi } from "./conversation/conversation.api";
+import { conversationReducer } from "./conversation/conversation.slice";
 
 export const makeStore = () => {
-      return configureStore({
-            reducer: {
-                  [authApi.reducerPath]: authApi.reducer,
-            },
-            middleware: (getDefaultMiddleware) =>
-                  getDefaultMiddleware().concat(
-                        authApi.middleware,
-                  ),
-      })
-}
+  return configureStore({
+    reducer: {
+      [authApi.reducerPath]: authApi.reducer,
+      [conversationApi.reducerPath]: conversationApi.reducer,
+      conversation: conversationReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware()
+        .concat(authApi.middleware)
+        .concat(conversationApi.middleware),
+  });
+};
