@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from '@prisma/client';
+import { Conversation, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class MessagesService {
     receiverId: string,
     message: string,
     request: Request,
-  ): Promise<Message> {
+  ): Promise<Conversation> {
     const senderId = request['userId'];
 
     let conversation = await this.prisma.conversation.findFirst({
@@ -30,15 +30,22 @@ export class MessagesService {
       });
     }
 
-    const newMessage = await this.prisma.message.create({
+    conversation = await this.prisma.conversation.update({
+      where: { id: conversation.id },
       data: {
-        receiverId,
-        senderId,
-        message,
+        messages: {
+          create: [
+            {
+              receiverId,
+              senderId,
+              message,
+            },
+          ],
+        },
       },
     });
 
-    return newMessage;
+    return conversation;
   }
 
   async getMessages(receiverId: string, request: Request): Promise<Message[]> {
@@ -51,7 +58,9 @@ export class MessagesService {
         ],
       },
       include: {
-        messages: true,
+        messages: {
+          include: { receiver: true, sender: true },
+        },
       },
     });
 

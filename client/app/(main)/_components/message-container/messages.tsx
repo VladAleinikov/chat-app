@@ -1,81 +1,26 @@
-import { Message } from "./message"
+import { Message as MessageType } from "@/types/message";
+import { Message } from "./message";
+import { useAppSelector } from "@/hooks/use-actions";
 
-
-export const Messages = () => {
-  return (
-        <div className="px-4 flex-1 overflow-auto">
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={false}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-              <Message
-                    isYourMessage={true}
-                    messageText="Hello world!"
-                    sentAt="13:00"
-                    avatarUrl="https://github.com/shadcn.png"
-              />
-    </div>
-  )
+interface MessagesProps {
+  messages: MessageType[];
 }
+
+export const Messages = ({ messages }: MessagesProps) => {
+  const receiverId = useAppSelector(
+    (store) => store.conversation.currentConversation?.id
+  );
+  return (
+    <div className="px-4 flex-1 overflow-auto">
+      {messages.map((message) => (
+        <Message
+          key={message.id}
+          isYourMessage={receiverId !== message.senderId}
+          messageText={message.message}
+          sentAt={message.createdAt}
+          avatarUrl={message.sender.profilePicture}
+        />
+      ))}
+    </div>
+  );
+};
